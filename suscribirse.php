@@ -73,6 +73,9 @@ if (isset($_POST['user'])) {
                             <div class="d-grid gap-2 mb-3">
                                 <a href="loguearse.php" class="text-decoration-none">¿Ya tienes cuenta? Inicia sesión</a>
                             </div>
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-3">
+                                <a href="index.php" class="btn btn-sm btn-dark text-end text-small">Volver al Inicio</a>
+                                </div>
                             <?php if ($acierto === "error"): ?>
                                 <div class="alert alert-danger mt-3">
                                     Error al registrar el usuario, por favor intenta de nuevo.

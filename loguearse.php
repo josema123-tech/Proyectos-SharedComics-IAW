@@ -59,6 +59,9 @@
                             <div class="text-center">
                                 <span class="text-muted">¿No tienes cuenta?</span> 
                                 <a href="/dashboard/suscribirse.php" class="text-decoration-none">Regístrate</a>
+                                <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-3">
+                                <a href="index.php" class="btn btn-sm btn-dark text-end text-small">Volver al Inicio</a>
+                                </div>
                             </div>
                         </form>
                     </div>
