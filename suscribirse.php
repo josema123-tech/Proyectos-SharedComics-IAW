@@ -8,6 +8,8 @@ $acierto = "esperando";
 if (isset($_POST['user'])) {
     $user = $_POST['user'];
     $password = $_POST['password'];
+    $confirm_password = $_POST['confirm_password'];
+    $password_seguro = password_hash($password, PASSWORD_DEFAULT);
     $gmail = $_POST['gmail'];
 
     // ¿Ya existe este usuario o correo?
@@ -18,13 +20,17 @@ if (isset($_POST['user'])) {
         $acierto = "duplicado";
     } else {
         // Insertar el nuevo usuario en la tabla
-        $insertar = $conexion->query("INSERT INTO usuarios (username, email, password) VALUES ('$user', '$gmail', '$password')");
-        
-        // CORRECCIÓN: Comprobamos el resultado del INSERT aquí dentro
-        if ($insertar !== false) {
-            $acierto = "exito";
+        if ( $password !== $confirm_password && !empty($password) && !empty($confirm_password)) {
+            $acierto = "password_mismatch";
         } else {
-            $acierto = "error";
+            $insertar = $conexion->query("INSERT INTO usuarios (username, email, password) VALUES ('$user', '$gmail', '$password_seguro')");
+
+            // CORRECCIÓN: Comprobamos el resultado del INSERT aquí dentro
+            if ($insertar !== false) {
+                $acierto = "exito";
+            } else {
+                $acierto = "error";
+            }
         }
     }
 }
@@ -87,6 +93,10 @@ if (isset($_POST['user'])) {
                             <?php elseif ($acierto === "duplicado"): ?>
                                 <div class="alert alert-warning mt-3">
                                     El nombre de usuario o correo electrónico ya está en uso.
+                                </div>
+                            <?php elseif ($acierto === "password_mismatch"): ?>
+                                <div class="alert alert-danger mt-3">
+                                    Las contraseñas no coinciden.
                                 </div>
                             <?php endif; ?>
                              

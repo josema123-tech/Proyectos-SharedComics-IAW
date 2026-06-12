@@ -58,7 +58,7 @@
                         <p class='dropdown-item-text mb-0 fw-bold text-white fw-bolder'>" . ($_SESSION['user']) . "</p>
                     </a> 
 
-                    <ul class='dropdown-menu dropdown-menu-start dropdown-centrado text-medium p-2' aria-labelledby='Menu'> 
+                    <ul class='dropdown-centrado dropdown-menu dropdown-menu-start text-medium p-2' aria-labelledby='Menu'> 
                         <li><a class='btn btn-outline-success d-grid gap-2' href='ver_perfil.php'>Ver Perfil</a></li> 
                         <li><a class='btn btn-outline-success d-grid gap-2' href='editar_perfil.php'>Editar Perfil</a></li> 
                         <li><a class='btn btn-outline-danger d-grid gap-2' href='logout.php'>Salir</a></li> 

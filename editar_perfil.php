@@ -15,8 +15,9 @@ if (isset($_POST['user'])) {
     $user = !empty(trim($_POST['user'])) ? trim($_POST['user']) : $datos_usuario['username'];
     $gmail = !empty(trim($_POST['gmail'])) ? trim($_POST['gmail']) : $datos_usuario['email'];
     $password = $_POST['password'];
+    $password_seguro = password_hash($password, PASSWORD_DEFAULT);
     $confirm_password = $_POST['confirm_password'];
-
+    $confirm_password_seguro = password_hash($confirm_password, PASSWORD_DEFAULT);
     // Validar duplicados
     $buscar_duplicado = $conexion->query("SELECT * FROM usuarios WHERE (username = '$user' OR email = '$gmail') AND username != '$usuario_actual'");
 
@@ -26,7 +27,7 @@ if (isset($_POST['user'])) {
         // Comprobar si se desea actualizar la contraseña
         if (!empty($password)) {
             if ($password === $confirm_password) {
-                $actualizar = $conexion->query("UPDATE usuarios SET username = '$user', email = '$gmail', password = '$password' WHERE username = '$usuario_actual'");
+                $actualizar = $conexion->query("UPDATE usuarios SET username = '$user', email = '$gmail', password = '$password_seguro' WHERE username = '$usuario_actual'");
             } else {
                 $acierto = "password_mismatch";
                 $actualizar = false;

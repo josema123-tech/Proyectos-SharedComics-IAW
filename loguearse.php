@@ -5,12 +5,20 @@
                             if (isset($_POST['user'])) {
                                 $user = $_POST['user'];
                                 $password = $_POST['password'];
-
-                                
-                                $consulta = $conexion->query("SELECT * FROM usuarios WHERE username = '$user' AND password = '$password'");
+                                $consulta = $conexion->query("SELECT * FROM usuarios WHERE username = '$user'");
 
                                 
                                 if ($consulta->num_rows > 0) {
+                                    if ($fila = $consulta->fetch_assoc()) {
+                                        if (password_verify($password, $fila['password'])) {
+                                             session_start();
+                                    $_SESSION['user'] = $user;
+                                    header("Location: index.php");
+                                    exit();
+                                        } else {
+                                            echo "<div class='alert alert-danger mt-3' role='alert'>Usuario o contraseña incorrectos.</div>";
+                                        }
+                                    }
                                     session_start();
                                     $_SESSION['user'] = $user;
                                     header("Location: index.php");
