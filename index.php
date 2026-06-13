@@ -28,8 +28,7 @@ $conexion = new mysqli("localhost", "root", "", "sharedcomics");
                 if (!isset($_SESSION['user'])) {
                     // en caso de no estar logueado, mostrar los siguientes datos
                     echo "<ul class='nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0'> 
-                    <li><a href='index.php' class='nav-link px-2 text-white fw-bolder'>HOME</a></li> 
-                    <li><a href='TCOMICS.php' class='nav-link px-2 text-white fw-bolder'>TODOS LOS COMICS</a></li> 
+                    <li><a href='index.php' class='nav-link px-2 text-white fw-bolder'>HOME</a></li>  
                     <li><a href='buscador.php' class='nav-link px-2 text-white fw-bolder'>BUSCADOR</a></li> 
                 </ul>
                 <div class='text-end'> 
@@ -39,8 +38,7 @@ $conexion = new mysqli("localhost", "root", "", "sharedcomics");
                 } else {
                 // en caso de SI estar logueado mostar los siguientes datos
                     echo "<ul class='nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0'> 
-                    <li><a href='index.php' class='nav-link px-2 text-white fw-bolder'>HOME</a></li> 
-                    <li><a href='TCOMICS.php' class='nav-link px-2 text-white fw-bolder'>TODOS LOS COMICS</a></li> 
+                    <li><a href='index.php' class='nav-link px-2 text-white fw-bolder'>HOME</a></li>  
                     <li><a href='buscador.php' class='nav-link px-2 text-white fw-bolder'>BUSCADOR</a></li> 
                     <li><a href='mis_comics.php' class='nav-link px-2 text-white fw-bolder'>MIS COMICS</a></li> 
                     <li><a href='subir_comics.php' class='nav-link px-2 text-white fw-bolder'>SUBIR COMICS</a></li> 
