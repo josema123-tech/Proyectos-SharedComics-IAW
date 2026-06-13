@@ -1,30 +1,31 @@
 <?php
 session_start();
-
+// si no hay sesion activa mandar a login
+if (!isset($_SESSION["user"])) {
+    header("Location: loguearse.php");
+    exit();
+}
+// realizar conexion
 $conexion = new mysqli("localhost", "root", "", "sharedcomics");
 $usuario_actual = $_SESSION['user'];
 $acierto = "esperando";
-
-// OBTENER LOS DATOS ACTUALES DEL USUARIO
+// consulta para obtener informacion del usuario
 $consulta = $conexion->query("SELECT username, email FROM usuarios WHERE username = '$usuario_actual'");
 $datos_usuario = $consulta->fetch_assoc();
-
-// ACTUALIZACIÓN ENVIADA POR EL FORMULARIO
+// realizar cambios
 if (isset($_POST['user'])) {
-    // Si el campo viene vacío, conservamos el valor actual de la base de datos
     $user = !empty(trim($_POST['user'])) ? trim($_POST['user']) : $datos_usuario['username'];
     $gmail = !empty(trim($_POST['gmail'])) ? trim($_POST['gmail']) : $datos_usuario['email'];
     $password = $_POST['password'];
     $password_seguro = password_hash($password, PASSWORD_DEFAULT);
     $confirm_password = $_POST['confirm_password'];
     $confirm_password_seguro = password_hash($confirm_password, PASSWORD_DEFAULT);
-    // Validar duplicados
+// no permitir usuarios duplicados en la base de datos
     $buscar_duplicado = $conexion->query("SELECT * FROM usuarios WHERE (username = '$user' OR email = '$gmail') AND username != '$usuario_actual'");
-
     if ($buscar_duplicado->num_rows > 0) {
         $acierto = "duplicado";
     } else {
-        // Comprobar si se desea actualizar la contraseña
+// hacer update y editar informacion del usuario
         if (!empty($password)) {
             if ($password === $confirm_password) {
                 $actualizar = $conexion->query("UPDATE usuarios SET username = '$user', email = '$gmail', password = '$password_seguro' WHERE username = '$usuario_actual'");
@@ -33,11 +34,9 @@ if (isset($_POST['user'])) {
                 $actualizar = false;
             }
         } else {
-            // Actualizar datos sin tocar la contraseña
+// si no se introdujo contraseña, solo se actualiza el usuario y gmail
             $actualizar = $conexion->query("UPDATE usuarios SET username = '$user', email = '$gmail' WHERE username = '$usuario_actual'");
         }
-
-
         if ($acierto !== "password_mismatch") {
             if ($actualizar !== false) {
                 $acierto = "exito";
@@ -56,7 +55,6 @@ if (isset($_POST['user'])) {
     }
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -72,16 +70,16 @@ if (isset($_POST['user'])) {
             <div class="col-12 col-sm-8 col-md-6 col-lg-4">
                 <div class="card shadow-sm border-0">
                     <div class="card-body p-4">
-                        <h2 class="text-center mb-4 fw-bold text-primary">Editar Perfil</h2>
-                        
+                        <h2 class="text-center text-success mb-4 fw-bold">Editar Perfil</h2>
+                        <!-- formulario editar usuario -->
                         <form action="" method="POST">
                             <div class="mb-3">
                                 <label for="user" class="form-label">Usuario</label>
-                                <input type="text" class="form-control" id="user" name="user" value="<?php echo htmlspecialchars($datos_usuario['username'] ?? ''); ?>">
+                                <input type="text" class="form-control" id="user" name="user" value="<?php echo ($datos_usuario['username'] ?? ''); ?>">
                             </div>
                             <div class="mb-3">
                                 <label for="gmail" class="form-label">Correo Electrónico</label>
-                                <input type="email" class="form-control" id="gmail" name="gmail" value="<?php echo htmlspecialchars($datos_usuario['email'] ?? ''); ?>">
+                                <input type="email" class="form-control" id="gmail" name="gmail" value="<?php echo ($datos_usuario['email'] ?? ''); ?>">
                             </div>
 
                             <div class="mb-3">
@@ -95,13 +93,13 @@ if (isset($_POST['user'])) {
                             </div>
                             
                             <div class="d-grid gap-2 mb-3">
-                                <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                                <button type="submit" class="btn btn-success fw-bold p-2">Guardar Cambios</button>
                             </div>
                             
                             <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-3">
-                                <a href="index.php" class="btn btn-sm btn-dark text-end text-small">Volver al Inicio</a>
+                                <a href="index.php" class="btn btn-sm btn-outline-success fw-bold p-2">Volver al Inicio</a>
                             </div>
-
+                        <!-- php para manejar errores que puedan ocurrir -->
                             <?php if ($acierto === "error"): ?>
                                 <div class="alert alert-danger mt-3">
                                     Error al actualizar los datos, por favor intenta de nuevo.

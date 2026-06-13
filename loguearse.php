@@ -1,34 +1,30 @@
  <?php
+ // conexion a la base de datos
  $conexion = new mysqli("localhost", "root", "", "sharedcomics");
-
-                            
-                            if (isset($_POST['user'])) {
-                                $user = $_POST['user'];
-                                $password = $_POST['password'];
-                                $consulta = $conexion->query("SELECT * FROM usuarios WHERE username = '$user'");
-
-                                
-                                if ($consulta->num_rows > 0) {
-                                    if ($fila = $consulta->fetch_assoc()) {
-                                        if (password_verify($password, $fila['password'])) {
-                                             session_start();
-                                    $_SESSION['user'] = $user;
-                                    header("Location: index.php");
-                                    exit();
-                                        } else {
-                                            echo "<div class='alert alert-danger mt-3' role='alert'>Usuario o contraseña incorrectos.</div>";
-                                        }
-                                    }
-                                    session_start();
-                                    $_SESSION['user'] = $user;
-                                    header("Location: index.php");
-                                    exit();
-                                } else {
-                                    echo "<div class='alert alert-danger mt-3' role='alert'>Usuario o contraseña incorrectos.</div>";
-                                }
-                            }
+ // seccion para loguear al susuario                          
+    if (isset($_POST['user'])) {
+        $user = $_POST['user'];
+        $password = $_POST['password'];
+        $consulta = $conexion->query("SELECT * FROM usuarios WHERE username = '$user'");
+        // en caso de que el usuario sea correcto....
+        if ($consulta->num_rows > 0) {
+            if ($fila = $consulta->fetch_assoc()) {
+                if (password_verify($password, $fila['password'])) {
+                    // en caso de que el usuario y contraseña sean correctos...
+                        session_start();
+                        $_SESSION['user'] = $user;
+                        header("Location: index.php");
+                } else {
+                    // si la contraseña falla
+                        echo "<div class='alert alert-danger mt-3' role='alert'>Usuario o contraseña incorrectos.</div>";
+                }
+            }
+        } else {
+            // si el usuario falla
+            echo "<div class='alert alert-danger mt-3' role='alert'>Usuario o contraseña incorrectos.</div>";
+         }
+    }
 ?>
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -45,35 +41,31 @@
             <div class="col-12 col-sm-8 col-md-6 col-lg-4">
                 <div class="card shadow-sm border-0">
                     <div class="card-body p-4">
-                        <h2 class="text-center mb-4 fw-bold text-primary">Iniciar Sesión</h2>
+                        <!-- titulo de login -->
+                        <h2 class="text-center mb-4 fw-bold text-success">Iniciar Sesión</h2>
+        <!-- formulario de login -->
                         <form action="loguearse.php" method="POST">
                             <div class="mb-3">
                                 <label for="user" class="form-label">Usuario</label>
                                 <input type="text" class="form-control" id="user" name="user" placeholder="Tu nombre de usuario" required>
                             </div>
-                            
-                            <!-- Campo: Contraseña -->
                             <div class="mb-3">
                                 <label for="password" class="form-label">Contraseña</label>
                                 <input type="password" class="form-control" id="password" name="password" placeholder="Tu contraseña" required>
                             </div>
-                            
-                            <!-- Botón de Envío -->
                             <div class="d-grid gap-2 mb-3">
-                                <button type="submit" class="btn btn-primary">Entrar</button>
+                                <button type="submit" class="btn btn-success fw-bold p-2">Entrar</button>
                             </div>
-                            
-                            <!-- Enlace de registro (con la etiqueta <a> correcta de Bootstrap) -->
                             <div class="text-center">
                                 <span class="text-muted">¿No tienes cuenta?</span> 
-                                <a href="/dashboard/suscribirse.php" class="text-decoration-none">Regístrate</a>
+                                <a href="/dashboard/suscribirse.php" class="text-decoration-none text-success fw-bold">Regístrate</a>
                                 <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-3">
-                                <a href="index.php" class="btn btn-sm btn-dark text-end text-small">Volver al Inicio</a>
+                                <a href="index.php" class="btn btn-sm btn-outline-success fw-bold p-2">Volver al Inicio</a>
                                 </div>
                             </div>
                         </form>
                     </div>
-                </div> <!-- Fin Tarjeta -->
+                </div> 
             </div>
         </div>
     </div>

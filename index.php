@@ -1,10 +1,10 @@
 <?php
+// inicio de sesion y conexion a la base de datos
 session_start();
 $conexion = new mysqli("localhost", "root", "", "sharedcomics");
 ?>
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,19 +16,17 @@ $conexion = new mysqli("localhost", "root", "", "sharedcomics");
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 <body>
-    <!-- HEADER -->
+    <!-- header de la pagina -->
     <header class="p-0 text-bg-dark custom-header">
         <div class="container-fluid ">
             <div class="d-flex align-items-center justify-content-center justify-content-lg-start">
-
-<!-- Cambiado: Insertado el logo dentro del enlace -->
                 <a href="index.php" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none me-3">
                     <img src="imagenes/images.png" alt="Logo" height="70" class="d-inline-block align-text-top ">
                 </a>
 
                 <?php
                 if (!isset($_SESSION['user'])) {
-// MENÚ PARA USUARIOS NO LOGUEADOS
+                    // en caso de no estar logueado, mostrar los siguientes datos
                     echo "<ul class='nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0'> 
                     <li><a href='index.php' class='nav-link px-2 text-white fw-bolder'>HOME</a></li> 
                     <li><a href='categorias.php' class='nav-link px-2 text-white fw-bolder'>CATEGORÍAS</a></li> 
@@ -36,10 +34,10 @@ $conexion = new mysqli("localhost", "root", "", "sharedcomics");
                 </ul>
                 <div class='text-end'> 
                     <a class='btn btn-outline-light me-2' href='/dashboard/loguearse.php' role='button'>Login</a> 
-                    <a class='btn btn-warning' href='/dashboard/suscribirse.php' role='button'>Sign-up</a>
+                    <a class='btn btn-success' href='/dashboard/suscribirse.php' role='button'>Sign-up</a>
                 </div>";
                 } else {
-// MENÚ PARA USUARIOS AUTENTICADOS
+                // en caso de SI estar logueado mostar los siguientes datos
                     echo "<ul class='nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0'> 
                     <li><a href='index.php' class='nav-link px-2 text-white fw-bolder'>HOME</a></li> 
                     <li><a href='categorias.php' class='nav-link px-2 text-white fw-bolder'>CATEGORÍAS</a></li> 
@@ -47,7 +45,7 @@ $conexion = new mysqli("localhost", "root", "", "sharedcomics");
                     <li><a href='favoritos.php' class='nav-link px-2 text-white fw-bolder'>MIS COMICS</a></li> 
                     <li><a href='subir_comics.php' class='nav-link px-2 text-white fw-bolder'>SUBIR COMICS</a></li> 
                 </ul>
-                
+                <!-- menu estilo desplegable del apartado del usuario -->
                 <div class='dropdown text-center me-5'> 
                     <a href='#' class='d-inline-block text-white text-decoration-none' 
                        id='Menu' 
@@ -69,13 +67,12 @@ $conexion = new mysqli("localhost", "root", "", "sharedcomics");
                 </div>";
                 }
                 ?>
-<!-- Fin del menú de navegación -->
             </div>
         </div>
     </header>
-<!-- Contenido principal de la página -->
+    <!-- contenido principal de la pagina -->
     <main class="container-fluid p-2">
-<!-- Carrusel de imágenes plublicitarias -->
+    <!-- carrusel promocional -->
         <div id="carouselExampleSlidesOnly" class="carousel slide" data-bs-ride="carousel">
             <div class="carousel-inner">
                 <div class="carousel-item active">
@@ -89,8 +86,7 @@ $conexion = new mysqli("localhost", "root", "", "sharedcomics");
                 </div>
             </div>
         </div>
-<!-- Fin del carrusel de imágenes plublicitarias -->
-<!-- Sección de Últimas Novedades -->
+        <!-- titulo seccion de novedades -->
         <section class="bg-light text-white py-5 border-top border-warning border-3">
             <div class="container">
                 <h2 class="text-start text-uppercase mb-1 fw-bold display-5 text-success" style="letter-spacing: 1px;">
@@ -99,9 +95,9 @@ $conexion = new mysqli("localhost", "root", "", "sharedcomics");
                 <p class="text-start text-success mb-4 small">
                     Descubre los últimos comics subidos por nuestros usuarios. ¡Explora y disfruta de nuevas historias!
                 </p>
+        <!-- seccion donde se muestran los 30 comics mas actuales, por fecha de subida -->
                 <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-5 g-4 justify-content-center">
                     <?php
-// Consulta con la sintaxis de MySQLi obtener los 30 comics más recientes de la base de datos, ordenados por fecha de subida en orden descendente.
                     $query = "SELECT id, titulo, descripcion, portada, usuario_id
                   FROM comics 
                   ORDER BY fecha_subida DESC 
@@ -111,7 +107,6 @@ $conexion = new mysqli("localhost", "root", "", "sharedcomics");
                     if ($resultado) {
                         while ($comic = mysqli_fetch_assoc($resultado)) {
                             ?>
-<!-- Mostrar cada comic en una tarjeta -->
                             <div class="col">
                                 <div class="card h-100 text-bg-light border-success shadow-sm">
 
@@ -123,7 +118,6 @@ $conexion = new mysqli("localhost", "root", "", "sharedcomics");
                                             title="<?php echo ($comic['titulo']); ?>">
                                             <?php echo ($comic['titulo']); ?>
                                         </h5>
-<!-- desplegable para mostrar la descripción del comic -->
                                         <div class="mb-3">
                                             <a class="text-success small text-decoration-none fw-semibold d-inline-block mb-1"
                                                 data-bs-toggle="collapse" href="#desc-<?php echo $comic['id']; ?>"
@@ -138,7 +132,6 @@ $conexion = new mysqli("localhost", "root", "", "sharedcomics");
                                                 </div>
                                             </div>
                                         </div>
-<!-- botón para ver el comic -->
                                         <a href="comic.php?id=<?php echo $comic['id']; ?>"
                                             class="btn btn-sm btn-outline-success fw-bold mt-auto w-100">
                                             Ver Comic
@@ -156,8 +149,6 @@ $conexion = new mysqli("localhost", "root", "", "sharedcomics");
                 </div>
             </div>
         </section>
-        <!-- Fin de la sección de Últimas Novedades -->
     </main>
 </body>
-
 </html>

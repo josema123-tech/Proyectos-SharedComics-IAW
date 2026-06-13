@@ -4,25 +4,23 @@ $conexion = new mysqli("localhost", "root", "", "sharedcomics");
 
 // Inicializamos la variable en "esperando" para que no pinte nada al cargar
 $acierto = "esperando"; 
-
+// si se realiza el formulario recogemos variables
 if (isset($_POST['user'])) {
     $user = $_POST['user'];
     $password = $_POST['password'];
     $confirm_password = $_POST['confirm_password'];
     $password_seguro = password_hash($password, PASSWORD_DEFAULT);
     $gmail = $_POST['gmail'];
-
-    // ¿Ya existe este usuario o correo?
+    // nos aseguramos de que no haya un usuario o gmail repetido en la base de datos
     $buscar_duplicado = $conexion->query("SELECT * FROM usuarios WHERE username = '$user' OR email = '$gmail'");
-
     if ($buscar_duplicado->num_rows > 0) {
-        // Si encuentra filas, es que ya existe
         $acierto = "duplicado";
     } else {
-        // Insertar el nuevo usuario en la tabla
+        // comprovamos su la contraseña se repitio correctamente
         if ( $password !== $confirm_password && !empty($password) && !empty($confirm_password)) {
             $acierto = "password_mismatch";
         } else {
+            // hacemos la inserccion
             $insertar = $conexion->query("INSERT INTO usuarios (username, email, password) VALUES ('$user', '$gmail', '$password_seguro')");
 
             // CORRECCIÓN: Comprobamos el resultado del INSERT aquí dentro
@@ -34,9 +32,7 @@ if (isset($_POST['user'])) {
         }
     }
 }
-// Eliminamos el bloque que estaba aquí suelto para que no sobreescriba el estado
 ?>
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -52,7 +48,8 @@ if (isset($_POST['user'])) {
             <div class="col-12 col-sm-8 col-md-6 col-lg-4">
                 <div class="card shadow-sm border-0">
                     <div class="card-body p-4">
-                        <h2 class="text-center mb-4 fw-bold text-primary">Registrarse</h2>
+                        <h2 class="text-center mb-4 fw-bold text-success">Registrarse</h2>
+                        <!-- formulario de reguistro -->
                         <form action="" method="POST">
                             <div class="mb-3">
                                 <label for="user" class="form-label">Usuario</label>
@@ -74,14 +71,16 @@ if (isset($_POST['user'])) {
                             </div>
                             
                             <div class="d-grid gap-2 mb-3">
-                                <button type="submit" class="btn btn-primary">Registrarse</button>
+                                <button type="submit" class="btn btn-success fw-bold p-2">Registrarse</button>
                             </div>
                             <div class="d-grid gap-2 mb-3">
-                                <a href="loguearse.php" class="text-decoration-none">¿Ya tienes cuenta? Inicia sesión</a>
+                                <a href="loguearse.php" class="text-decoration-none text-success fw-bold">¿Ya tienes cuenta? Inicia sesión</a>
                             </div>
                             <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-3">
-                                <a href="index.php" class="btn btn-sm btn-dark text-end text-small">Volver al Inicio</a>
+                                <a href="index.php" class="btn btn-sm btn-outline-success fw-bold p-2">Volver al Inicio</a>
                                 </div>
+
+                                <!-- manejo de posibles errores en el registro -->
                             <?php if ($acierto === "error"): ?>
                                 <div class="alert alert-danger mt-3">
                                     Error al registrar el usuario, por favor intenta de nuevo.
@@ -102,7 +101,8 @@ if (isset($_POST['user'])) {
                              
                         </form>
                     </div>
-                </div> </div>
+                </div> 
+            </div>
         </div>
     </div>
 </body>
