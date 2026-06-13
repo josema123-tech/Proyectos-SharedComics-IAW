@@ -12,7 +12,7 @@ if (!$id_comic) {
     exit;
 }
 // Preparar y ejecutar la consulta para obtener los datos del cómic
-$sql_comic = "SELECT titulo, descripcion FROM comics WHERE id = ?";
+$sql_comic = "SELECT titulo, descripcion, pdf_comic FROM comics WHERE id = ?";
 $stmt_comic = $conexion->prepare($sql_comic);
 $stmt_comic->bind_param("i", $id_comic); 
 $stmt_comic->execute();
@@ -39,7 +39,6 @@ $stmt_comic->close();
 $stmt_paginas->close();
 $conexion->close();
 ?>
-<!-- El resto del código HTML para mostrar el cómic y sus páginas -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -47,60 +46,82 @@ $conexion->close();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo htmlspecialchars($comic['titulo']); ?> - Lector</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        /* Ajuste visual para el contenedor del lector de cómics */
-        .carousel-item img {
-            max-height: 85vh;
-            object-fit: contain;
-            background-color: #1a1a1a; 
-        }
-    </style>
 </head>
-<!-- contenido principal -->
 <body class="bg-light">
-    <div class="container  my-4">
-        <div class="row container mb-4">
-            <div class=" col-12">
-<!-- Botón de volver al catálogo -->
-                <a href="index.php" class="btn btn-outline-secondary btn-sm mb-3">← Volver al catálogo</a>
-<!-- Título y descripción del cómic -->
-                <h1 class="display-5 fw-bold"><?php echo ($comic['titulo']); ?></h1>
-                <p class="text-muted"><?php echo ($comic['descripcion']); ?></p>
+    <div class="container my-4">
+        <div class="row justify-content-center">
+           <div class="container-fluid p-2">
+                <div class="p-3 bg-white border border-secondary-subtle rounded shadow-sm text-center">
+                    <a href="index.php" class="btn btn-outline-secondary btn-sm mb-3 d-inline-block">← Volver al catálogo</a>
+                    <h1 class="display-5 fw-bold text-dark"><?php echo htmlspecialchars($comic['titulo']); ?></h1>
+                    <hr class="my-3 mx-auto text-secondary" style="max-width: 100px;">
+                    <p class="text-muted mx-auto mb-0" style="max-width: 600px;"><?php echo htmlspecialchars($comic['descripcion']); ?></p>
+                </div>
             </div>
-        </div>
+    
+         </div>
+
+    </div>
         <div class="row justify-content-center">
             <div class="col-md-9 col-lg-7">
-<!-- si no hay paginas .... -->
                 <?php if (empty($paginas)): ?>
                     <div class="alert alert-warning text-center" role="alert">
                         Este cómic no tiene páginas disponibles todavía.
                     </div>
-<!-- carrousel para mostar las paginas -->            
-                <?php else: ?>
-                    <div id="lectorComic" class="carousel carousel-dark slide shadow-lg rounded" data-bs-ride="false" data-bs-interval="false">
-                        <div class="text-center my-2 fw-bold text-muted">
-                        Páginas <?php echo count($paginas); ?>
+               <?php else: ?>
+                    <div id="lectorComic" class="carousel carousel-dark slide shadow-lg rounded bg-dark p-2 mb-4" data-bs-ride="false" data-bs-interval="false">
+                        <div class="text-center my-2 fw-bold text-white-50">
+                            Total: <?php echo count($paginas); ?> páginas
                         </div>
+                        
                         <div class="carousel-inner text-center">
                             <?php foreach ($paginas as $index => $ruta_imagen): ?>
                                 <div class="carousel-item <?php echo $index === 0 ? 'active' : ''; ?>">
-                                    <img src="<?php echo ($ruta_imagen); ?>" class="d-block w-100" alt="Página del cómic">
+                                    <img src="<?php echo htmlspecialchars($ruta_imagen); ?>" class="d-block mx-auto img-fluid" alt="Página del cómic" style="max-height: 80vh; object-fit: contain;">
                                 </div>
                             <?php endforeach; ?>
                         </div>
 
-                        <button class="carousel-control-prev" type="button" data-bs-target="#lectorComic" data-bs-slide="prev">
-                            <span class="carousel-control-prev-icon bg-white rounded-circle p-3 shadow-sm" aria-hidden="true"></span>
-                            <span class="visually-hidden">Anterior</span>
-                        </button>
+                        <div class="d-flex justify-content-center align-items-center gap-2 mt-3 mb-2">
+                            <span class="text-white-50 small">Ir a la página:</span>
+                            <div class="dropdown">
+                                <button class="btn btn-sm btn-outline-light dropdown-toggle" type="button" id="desplegablePaginas" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Seleccionar...
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="desplegablePaginas" style="max-height: 250px; overflow-y: auto;">
+                                    <?php foreach ($paginas as $index => $ruta_imagen): ?>
+                                        <li>
+                                            <button type="button" 
+                                                    class="dropdown-item small" 
+                                                    data-bs-target="#lectorComic" 
+                                                    data-bs-slide-to="<?php echo $index; ?>">
+                                                Página <?php echo $index + 1; ?>
+                                            </button>
+                                        </li>
+                                    <?php endforeach; ?>
+                                </ul>
+                            </div>
+                        </div>
 
-                        <button class="carousel-control-next" type="button" data-bs-target="#lectorComic" data-bs-slide="next">
-                            <span class="carousel-control-next-icon bg-white rounded-circle p-3 shadow-sm" aria-hidden="true"></span>
-                            <span class="visually-hidden">Siguiente</span>
-                        </button>
-                    </div><?php endif; ?>
+                    </div>
+                <?php endif; ?>
+
+                <div class="card m-2">
+                    <div class="card-body text-center">
+                        <p class="fw-bold">¿TAMBIÉN PUEDES DESCARGAR EL PDF AQUÍ?</p>
+                        <?php if (!empty($comic['pdf_comic']) && file_exists($comic['pdf_comic'])): ?>
+                            <a href="<?php echo htmlspecialchars($comic['pdf_comic']); ?>" download="<?php echo htmlspecialchars($comic['titulo']); ?>.pdf" class="btn btn-success btn-sm mb-3">
+                                📥 Descargar PDF
+                            </a>
+                        <?php else: ?>
+                            <button class="btn btn-secondary btn-sm mb-3" disabled title="PDF no disponible">
+                                📥 PDF no disponible
+                            </button>
+                        <?php endif; ?>
+                    </div>
+                </div>
             </div>
-        </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

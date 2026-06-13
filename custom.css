@@ -11,3 +11,10 @@
     transform: translateX(-50%) !important;
     margin-top: 4rem !important;
 }
+
+.custom-font {
+    background-image: url('imagenes/novedadesf.jpg') !important;
+    background-size: mosaic !important; 
+    background-position: center !important;
+    background-repeat: repeat !important;
+}
