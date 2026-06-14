@@ -1,29 +1,20 @@
-<?php   
-// Conectar a la base de datos
+<?php
 $conexion = new mysqli("localhost", "root", "", "sharedcomics");
-
-// Inicializamos la variable en "esperando" para que no pinte nada al cargar
-$acierto = "esperando"; 
-// si se realiza el formulario recogemos variables
+$acierto = "esperando";
 if (isset($_POST['user'])) {
     $user = $_POST['user'];
     $password = $_POST['password'];
     $confirm_password = $_POST['confirm_password'];
     $password_seguro = password_hash($password, PASSWORD_DEFAULT);
     $gmail = $_POST['gmail'];
-    // nos aseguramos de que no haya un usuario o gmail repetido en la base de datos
     $buscar_duplicado = $conexion->query("SELECT * FROM usuarios WHERE username = '$user' OR email = '$gmail'");
     if ($buscar_duplicado->num_rows > 0) {
         $acierto = "duplicado";
     } else {
-        // comprovamos su la contraseña se repitio correctamente
-        if ( $password !== $confirm_password && !empty($password) && !empty($confirm_password)) {
+        if ($password !== $confirm_password && !empty($password) && !empty($confirm_password)) {
             $acierto = "password_mismatch";
         } else {
-            // hacemos la inserccion
             $insertar = $conexion->query("INSERT INTO usuarios (username, email, password) VALUES ('$user', '$gmail', '$password_seguro')");
-
-            // CORRECCIÓN: Comprobamos el resultado del INSERT aquí dentro
             if ($insertar !== false) {
                 $acierto = "exito";
             } else {
@@ -35,6 +26,7 @@ if (isset($_POST['user'])) {
 ?>
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -42,6 +34,7 @@ if (isset($_POST['user'])) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </head>
+
 <body class="bg-light">
     <div class="container">
         <div class="row justify-content-center align-items-center min-vh-100">
@@ -49,38 +42,38 @@ if (isset($_POST['user'])) {
                 <div class="card shadow-sm border-0">
                     <div class="card-body p-4">
                         <h2 class="text-center mb-4 fw-bold text-success">Registrarse</h2>
-                        <!-- formulario de reguistro -->
                         <form action="" method="POST">
                             <div class="mb-3">
                                 <label for="user" class="form-label">Usuario</label>
-                                <input type="text" class="form-control" id="user" name="user" placeholder="Tu nombre de usuario" required>
+                                <input type="text" class="form-control" id="user" name="user"
+                                    placeholder="Tu nombre de usuario" required>
                             </div>
                             <div class="mb-3">
                                 <label for="gmail" class="form-label">Correo Electrónico</label>
-                                <input type="email" class="form-control" id="gmail" name="gmail" placeholder="Tu correo electrónico" required>
+                                <input type="email" class="form-control" id="gmail" name="gmail"
+                                    placeholder="Tu correo electrónico" required>
                             </div>
-
                             <div class="mb-3">
                                 <label for="password" class="form-label">Contraseña</label>
-                                <input type="password" class="form-control" id="password" name="password" placeholder="Tu contraseña" required>
+                                <input type="password" class="form-control" id="password" name="password"
+                                    placeholder="Tu contraseña" required>
                             </div>
-
-                             <div class="mb-3">
+                            <div class="mb-3">
                                 <label for="confirm_password" class="form-label">Confirmar Contraseña</label>
-                                <input type="password" class="form-control" id="confirm_password" name="confirm_password" placeholder="Confirma tu contraseña" required>
+                                <input type="password" class="form-control" id="confirm_password"
+                                    name="confirm_password" placeholder="Confirma tu contraseña" required>
                             </div>
-                            
                             <div class="d-grid gap-2 mb-3">
                                 <button type="submit" class="btn btn-success fw-bold p-2">Registrarse</button>
                             </div>
                             <div class="d-grid gap-2 mb-3">
-                                <a href="loguearse.php" class="text-decoration-none text-success fw-bold">¿Ya tienes cuenta? Inicia sesión</a>
+                                <a href="loguearse.php" class="text-decoration-none text-success fw-bold">¿Ya tienes
+                                    cuenta? Inicia sesión</a>
                             </div>
                             <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-3">
-                                <a href="index.php" class="btn btn-sm btn-outline-success fw-bold p-2">Volver al Inicio</a>
-                                </div>
-
-                                <!-- manejo de posibles errores en el registro -->
+                                <a href="index.php" class="btn btn-sm btn-outline-success fw-bold p-2">Volver al
+                                    Inicio</a>
+                            </div>
                             <?php if ($acierto === "error"): ?>
                                 <div class="alert alert-danger mt-3">
                                     Error al registrar el usuario, por favor intenta de nuevo.
@@ -98,12 +91,12 @@ if (isset($_POST['user'])) {
                                     Las contraseñas no coinciden.
                                 </div>
                             <?php endif; ?>
-                             
                         </form>
                     </div>
-                </div> 
+                </div>
             </div>
         </div>
     </div>
 </body>
+
 </html>

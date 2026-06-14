@@ -1,6 +1,6 @@
 .custom-header {
     background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('imagenes/header.jpg');
-    background-size: mosaic; 
+    background-size: mosaic;
     background-position: center;
     background-repeat: repeat;
 }
@@ -14,7 +14,7 @@
 
 .custom-font {
     background-image: url('imagenes/novedadesf.jpg') !important;
-    background-size: mosaic !important; 
+    background-size: mosaic !important;
     background-position: center !important;
     background-repeat: repeat !important;
 }

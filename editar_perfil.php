@@ -1,18 +1,14 @@
 <?php
 session_start();
-// si no hay sesion activa mandar a login
 if (!isset($_SESSION["user"])) {
     header("Location: loguearse.php");
     exit();
 }
-// realizar conexion
 $conexion = new mysqli("localhost", "root", "", "sharedcomics");
 $usuario_actual = $_SESSION['user'];
 $acierto = "esperando";
-// consulta para obtener informacion del usuario
 $consulta = $conexion->query("SELECT username, email FROM usuarios WHERE username = '$usuario_actual'");
 $datos_usuario = $consulta->fetch_assoc();
-// realizar cambios
 if (isset($_POST['user'])) {
     $user = !empty(trim($_POST['user'])) ? trim($_POST['user']) : $datos_usuario['username'];
     $gmail = !empty(trim($_POST['gmail'])) ? trim($_POST['gmail']) : $datos_usuario['email'];
@@ -20,12 +16,10 @@ if (isset($_POST['user'])) {
     $password_seguro = password_hash($password, PASSWORD_DEFAULT);
     $confirm_password = $_POST['confirm_password'];
     $confirm_password_seguro = password_hash($confirm_password, PASSWORD_DEFAULT);
-// no permitir usuarios duplicados en la base de datos
     $buscar_duplicado = $conexion->query("SELECT * FROM usuarios WHERE (username = '$user' OR email = '$gmail') AND username != '$usuario_actual'");
     if ($buscar_duplicado->num_rows > 0) {
         $acierto = "duplicado";
     } else {
-// hacer update y editar informacion del usuario
         if (!empty($password)) {
             if ($password === $confirm_password) {
                 $actualizar = $conexion->query("UPDATE usuarios SET username = '$user', email = '$gmail', password = '$password_seguro' WHERE username = '$usuario_actual'");
@@ -34,18 +28,13 @@ if (isset($_POST['user'])) {
                 $actualizar = false;
             }
         } else {
-// si no se introdujo contraseña, solo se actualiza el usuario y gmail
             $actualizar = $conexion->query("UPDATE usuarios SET username = '$user', email = '$gmail' WHERE username = '$usuario_actual'");
         }
         if ($acierto !== "password_mismatch") {
             if ($actualizar !== false) {
                 $acierto = "exito";
-                
-                // Actualizar la variable de sesión si el usuario cambió su propio nombre
                 $_SESSION['user'] = $user;
-                $usuario_actual = $user; 
-                
-                // Refrescar los datos en pantalla con los nuevos valores
+                $usuario_actual = $user;
                 $datos_usuario['username'] = $user;
                 $datos_usuario['email'] = $gmail;
             } else {
@@ -57,6 +46,7 @@ if (isset($_POST['user'])) {
 ?>
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -64,6 +54,7 @@ if (isset($_POST['user'])) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </head>
+
 <body class="bg-light">
     <div class="container">
         <div class="row justify-content-center align-items-center min-vh-100">
@@ -71,38 +62,35 @@ if (isset($_POST['user'])) {
                 <div class="card shadow-sm border-0">
                     <div class="card-body p-4">
                         <h2 class="text-center text-success mb-4 fw-bold">Editar Perfil</h2>
-                        <!-- formulario editar usuario -->
                         <form action="" method="POST">
                             <div class="mb-3">
                                 <label for="user" class="form-label">Usuario</label>
-                                <input type="text" class="form-control" id="user" name="user" value="<?php echo ($datos_usuario['username'] ?? ''); ?>">
+                                <input type="text" class="form-control" id="user" name="user"
+                                    value="<?php echo ($datos_usuario['username'] ?? ''); ?>">
                             </div>
                             <div class="mb-3">
                                 <label for="gmail" class="form-label">Correo Electrónico</label>
-                                <input type="email" class="form-control" id="gmail" name="gmail" value="<?php echo ($datos_usuario['email'] ?? ''); ?>">
+                                <input type="email" class="form-control" id="gmail" name="gmail"
+                                    value="<?php echo ($datos_usuario['email'] ?? ''); ?>">
                             </div>
-
                             <div class="mb-3">
                                 <label for="password" class="form-label">Nueva Contraseña</label>
                                 <input type="password" class="form-control" id="password" name="password">
                             </div>
-
                             <div class="mb-3">
                                 <label for="confirm_password" class="form-label">Confirmar Nueva Contraseña</label>
-                                <input type="password" class="form-control" id="confirm_password" name="confirm_password">
+                                <input type="password" class="form-control" id="confirm_password"
+                                    name="confirm_password">
                             </div>
-                            
                             <div class="d-grid gap-2 mb-3">
                                 <button type="submit" class="btn btn-success fw-bold p-2">Guardar Cambios</button>
                             </div>
-                            
                             <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-3">
-                                <a href="index.php" class="btn btn-sm btn-outline-success fw-bold p-2">Volver al Inicio</a>
+                                <a href="index.php" class="btn btn-sm btn-outline-success fw-bold p-2">Volver al
+                                    Inicio</a>
                             </div>
-                        <!-- php para manejar errores que puedan ocurrir -->
                             <?php if ($acierto === "error"): ?>
                                 <div class="alert alert-danger mt-3">
-                                    Error al actualizar los datos, por favor intenta de nuevo.
                                 </div>
                             <?php elseif ($acierto === "exito"): ?>
                                 <div class="alert alert-success mt-3">
@@ -117,12 +105,12 @@ if (isset($_POST['user'])) {
                                     Las contraseñas ingresadas no coinciden.
                                 </div>
                             <?php endif; ?>
-                             
                         </form>
                     </div>
-                </div> 
+                </div>
             </div>
         </div>
     </div>
 </body>
+
 </html>
